@@ -1,0 +1,1306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Empire HQ — Kim's Dashboard</title>
+<style>
+  /* ================================================
+     DESIGN TOKENS
+  ================================================ */
+  :root {
+    /* Brand Colors (DO NOT CHANGE) */
+    --blue:        #B8D4E8;
+    --blue-dark:   #8ab5d1;
+    --blue-deep:   #5b8db8;
+    --green:       #7D9E8A;
+    --green-dark:  #5e7d6b;
+    --green-light: #f2f8f4;
+
+    /* Neutrals */
+    --bg:          #ffffff;
+    --card-bg:     #f8fbfd;
+    --border:      #dde8f0;
+    --text:        #2c3e50;
+    --text-mid:    #4a5d6e;
+    --text-light:  #6b7c8d;
+    --text-faint:  #9aadb8;
+
+    /* Status Colors */
+    --red:         #e05c5c;
+    --red-bg:      #fde8e8;
+    --yellow:      #d4a030;
+    --yellow-bg:   #fef3d8;
+    --success:     #4caf7d;
+    --success-bg:  #d8f3e6;
+    --purple:      #5e4b9a;
+    --purple-bg:   #ece8f8;
+
+    /* Shadows */
+    --shadow-sm:   0 1px 4px rgba(44,62,80,0.07);
+    --shadow-md:   0 3px 12px rgba(44,62,80,0.1);
+    --shadow-lg:   0 8px 24px rgba(44,62,80,0.12);
+
+    /* Typography Scale */
+    --text-xs:     0.7rem;
+    --text-sm:     0.8rem;
+    --text-base:   0.92rem;
+    --text-md:     1rem;
+    --text-lg:     1.15rem;
+    --text-xl:     1.4rem;
+    --text-2xl:    1.8rem;
+    --text-3xl:    2.4rem;
+    --text-hero:   3.2rem;
+
+    /* Spacing */
+    --space-xs:    0.25rem;
+    --space-sm:    0.5rem;
+    --space-md:    1rem;
+    --space-lg:    1.5rem;
+    --space-xl:    2rem;
+    --space-2xl:   3rem;
+
+    /* Layout */
+    --max-width:   980px;
+    --radius-sm:   6px;
+    --radius-md:   10px;
+    --radius-lg:   14px;
+  }
+
+  /* ================================================
+     BASE RESET
+  ================================================ */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    font-size: var(--text-base);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ================================================
+     HEADER
+  ================================================ */
+  header {
+    background: linear-gradient(135deg, var(--blue) 0%, #d6eaf5 60%, #e8f4ea 100%);
+    padding: var(--space-xl) var(--space-lg) var(--space-lg);
+    border-bottom: 3px solid var(--blue-dark);
+    position: relative;
+    overflow: hidden;
+  }
+
+  header::after {
+    content: '';
+    position: absolute;
+    top: -30px; right: -30px;
+    width: 160px; height: 160px;
+    background: rgba(125, 158, 138, 0.12);
+    border-radius: 50%;
+    pointer-events: none;
+  }
+
+  .header-inner {
+    max-width: var(--max-width);
+    margin: 0 auto;
+    position: relative;
+  }
+
+  header h1 {
+    font-size: var(--text-2xl);
+    font-weight: 800;
+    color: var(--text);
+    letter-spacing: -0.5px;
+    line-height: 1.2;
+  }
+
+  header h1 .empire-emoji {
+    font-size: 1.8rem;
+    vertical-align: middle;
+    margin-right: 0.2rem;
+  }
+
+  header .tagline {
+    font-size: var(--text-base);
+    color: var(--text-mid);
+    margin-top: var(--space-xs);
+    font-weight: 400;
+  }
+
+  header .meta-row {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+    margin-top: var(--space-sm);
+    flex-wrap: wrap;
+  }
+
+  header .last-updated {
+    font-size: var(--text-xs);
+    color: var(--text-light);
+    background: rgba(255,255,255,0.55);
+    padding: 0.2rem 0.6rem;
+    border-radius: 20px;
+    display: inline-block;
+  }
+
+  /* ================================================
+     NAVIGATION
+  ================================================ */
+  nav {
+    background: #eef5fa;
+    border-bottom: 2px solid var(--border);
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: var(--shadow-sm);
+  }
+
+  nav ul {
+    display: flex;
+    list-style: none;
+    max-width: var(--max-width);
+    margin: 0 auto;
+  }
+
+  nav a {
+    display: block;
+    padding: 0.75rem 1.1rem;
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--text-light);
+    text-decoration: none;
+    white-space: nowrap;
+    border-bottom: 3px solid transparent;
+    transition: color 0.2s, border-color 0.2s;
+  }
+
+  nav a:hover,
+  nav a.active {
+    color: var(--text);
+    border-bottom-color: var(--blue-dark);
+  }
+
+  /* ================================================
+     LAYOUT
+  ================================================ */
+  .section-wrap {
+    max-width: var(--max-width);
+    margin: 0 auto;
+    padding: var(--space-xl) var(--space-lg) var(--space-md);
+  }
+
+  .section-wrap + .section-wrap {
+    padding-top: var(--space-lg);
+  }
+
+  /* ================================================
+     SECTION TITLE
+  ================================================ */
+  .section-title {
+    font-size: var(--text-lg);
+    font-weight: 800;
+    color: var(--text);
+    margin-bottom: var(--space-lg);
+    padding-bottom: var(--space-sm);
+    border-bottom: 2px solid var(--blue);
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    letter-spacing: -0.2px;
+  }
+
+  /* ================================================
+     FINANCIAL OVERVIEW
+  ================================================ */
+  .finance-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+    gap: var(--space-md);
+    margin-bottom: var(--space-md);
+  }
+
+  .fin-card {
+    background: var(--card-bg);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: var(--space-md) var(--space-md);
+    transition: box-shadow 0.2s;
+  }
+
+  .fin-card:hover { box-shadow: var(--shadow-sm); }
+
+  .fin-card.highlight {
+    border-color: var(--green);
+    background: var(--green-light);
+  }
+
+  .fin-label {
+    font-size: var(--text-xs);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--text-light);
+    margin-bottom: var(--space-xs);
+  }
+
+  .fin-card.highlight .fin-label { color: var(--green-dark); }
+
+  .fin-value {
+    font-size: var(--text-2xl);
+    font-weight: 800;
+    color: var(--text);
+    line-height: 1.1;
+    letter-spacing: -0.5px;
+  }
+
+  .fin-value.negative { color: var(--red); }
+  .fin-value.positive { color: var(--success); }
+  .fin-value.muted    { font-size: var(--text-xl); color: var(--text-light); }
+
+  .fin-sub {
+    font-size: var(--text-xs);
+    color: var(--text-light);
+    margin-top: var(--space-xs);
+    line-height: 1.4;
+  }
+
+  /* Goal Progress Bar */
+  .goal-bar-wrap { margin-top: var(--space-sm); }
+
+  .goal-bar {
+    background: var(--border);
+    border-radius: 20px;
+    height: 8px;
+    overflow: hidden;
+  }
+
+  .goal-bar-fill {
+    background: linear-gradient(90deg, var(--green), var(--blue-dark));
+    height: 100%;
+    border-radius: 20px;
+    transition: width 0.8s ease;
+  }
+
+  .goal-bar-label {
+    font-size: var(--text-xs);
+    color: var(--text-light);
+    margin-top: 0.3rem;
+  }
+
+  /* Finance note */
+  .finance-note {
+    font-size: var(--text-xs);
+    color: var(--text-light);
+    margin-top: var(--space-xs);
+    padding: var(--space-sm) var(--space-md);
+    background: var(--card-bg);
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+  }
+
+  /* ================================================
+     PROJECT CARDS
+  ================================================ */
+  .projects-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+    gap: var(--space-md);
+  }
+
+  .proj-card {
+    background: var(--card-bg);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: var(--space-md);
+    transition: box-shadow 0.2s, transform 0.15s;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+  }
+
+  .proj-card:hover {
+    box-shadow: var(--shadow-md);
+    transform: translateY(-1px);
+  }
+
+  /* Priority left border */
+  .proj-card.priority-high   { border-left: 4px solid var(--red); }
+  .proj-card.priority-medium { border-left: 4px solid var(--yellow); }
+  .proj-card.priority-low    { border-left: 4px solid var(--blue-deep); }
+
+  .proj-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: var(--space-sm);
+    margin-bottom: var(--space-xs);
+  }
+
+  .proj-name {
+    font-size: var(--text-md);
+    font-weight: 700;
+    color: var(--text);
+    flex: 1;
+    line-height: 1.3;
+  }
+
+  /* STATUS BADGES — larger and immediately readable */
+  .badge {
+    font-size: var(--text-xs);
+    font-weight: 700;
+    padding: 0.25rem 0.65rem;
+    border-radius: 20px;
+    white-space: nowrap;
+    flex-shrink: 0;
+    letter-spacing: 0.3px;
+    border: 1px solid transparent;
+  }
+
+  .badge.dev      { background: #dceaf7; color: #1a5a8f; border-color: #b8d4e8; }
+  .badge.live     { background: var(--success-bg); color: #1a5a38; border-color: #9adcb8; }
+  .badge.progress { background: var(--yellow-bg); color: #7a4e00; border-color: #e8cc88; }
+  .badge.concept  { background: var(--purple-bg); color: #3e2a7a; border-color: #c8c0e8; }
+  .badge.building { background: var(--red-bg); color: #7a1a1a; border-color: #f0b8b8; }
+
+  .proj-rows {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    margin-top: var(--space-xs);
+  }
+
+  .proj-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: var(--text-sm);
+    gap: var(--space-sm);
+  }
+
+  .proj-row .key { color: var(--text-light); font-weight: 500; flex-shrink: 0; }
+  .proj-row .val { color: var(--text-mid); text-align: right; }
+
+  .proj-next {
+    margin-top: var(--space-sm);
+    padding: var(--space-sm) 0.75rem;
+    background: linear-gradient(135deg, #eef6fb, #f4faf2);
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+    font-size: var(--text-sm);
+    color: var(--text);
+    flex: 1;
+  }
+
+  .proj-next .next-label {
+    font-size: var(--text-xs);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    color: var(--green-dark);
+    margin-bottom: 0.2rem;
+  }
+
+  /* Priority pill */
+  .priority-pill {
+    display: inline-block;
+    font-size: var(--text-xs);
+    font-weight: 700;
+    padding: 0.18rem 0.5rem;
+    border-radius: 12px;
+    margin-top: var(--space-sm);
+    letter-spacing: 0.3px;
+  }
+
+  .priority-pill.high   { background: var(--red-bg); color: #7a1a1a; }
+  .priority-pill.medium { background: var(--yellow-bg); color: #7a4e00; }
+  .priority-pill.low    { background: #e8eef8; color: #2a4a8a; }
+
+  /* ================================================
+     SUBSCRIPTIONS TABLE
+  ================================================ */
+  .table-scroll {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    border-radius: var(--radius-md);
+    border: 1.5px solid var(--border);
+  }
+
+  .sub-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: var(--text-sm);
+    min-width: 520px;
+  }
+
+  .sub-table thead tr {
+    background: var(--blue);
+  }
+
+  .sub-table th {
+    padding: 0.7rem 1rem;
+    text-align: left;
+    font-size: var(--text-xs);
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    color: var(--text);
+    white-space: nowrap;
+  }
+
+  .sub-table td {
+    padding: 0.65rem 1rem;
+    border-bottom: 1px solid var(--border);
+    vertical-align: middle;
+  }
+
+  .sub-table tbody tr:last-child td { border-bottom: none; }
+
+  .sub-table tbody tr:hover { background: #f2f7fc; }
+
+  .status-badge {
+    display: inline-block;
+    font-size: var(--text-xs);
+    font-weight: 700;
+    padding: 0.25rem 0.6rem;
+    border-radius: 20px;
+    white-space: nowrap;
+  }
+
+  .status-badge.active { background: var(--success-bg); color: #1a5a38; }
+  .status-badge.warn   { background: var(--yellow-bg); color: #7a4e00; }
+  .status-badge.dead   { background: var(--red-bg); color: #7a1a1a; }
+
+  .table-note {
+    font-size: var(--text-xs);
+    color: var(--text-light);
+    margin-top: var(--space-sm);
+  }
+
+  /* ================================================
+     QUICK LINKS
+  ================================================ */
+  .links-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: var(--space-md);
+  }
+
+  .link-card {
+    background: var(--card-bg);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: var(--space-md);
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    transition: box-shadow 0.2s;
+  }
+
+  .link-card:hover { box-shadow: var(--shadow-sm); }
+
+  .link-title {
+    font-size: var(--text-base);
+    font-weight: 700;
+    color: var(--text);
+  }
+
+  .link-card a {
+    font-size: var(--text-xs);
+    color: var(--blue-deep);
+    text-decoration: none;
+    word-break: break-all;
+  }
+
+  .link-card a:hover { text-decoration: underline; }
+
+  .link-note {
+    font-size: var(--text-xs);
+    color: var(--text-light);
+  }
+
+  /* ================================================
+     RETIREMENT SECTION — motivating, not clinical
+  ================================================ */
+  .retirement-hero {
+    background: linear-gradient(135deg, var(--blue) 0%, #c8e4f5 40%, #c0d8c8 100%);
+    border-radius: var(--radius-lg);
+    padding: var(--space-xl) var(--space-xl);
+    text-align: center;
+    margin-bottom: var(--space-lg);
+    position: relative;
+    overflow: hidden;
+    box-shadow: var(--shadow-md);
+  }
+
+  .retirement-hero::before {
+    content: '🎯';
+    position: absolute;
+    font-size: 8rem;
+    opacity: 0.07;
+    top: -10px; right: -10px;
+    pointer-events: none;
+    line-height: 1;
+  }
+
+  .retirement-hero .hero-label {
+    font-size: var(--text-sm);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    color: var(--green-dark);
+    margin-bottom: var(--space-sm);
+  }
+
+  .retirement-hero .countdown-number {
+    font-size: var(--text-hero);
+    font-weight: 900;
+    color: var(--text);
+    line-height: 1;
+    letter-spacing: -2px;
+  }
+
+  .retirement-hero .countdown-unit {
+    font-size: var(--text-xl);
+    font-weight: 600;
+    color: var(--text-mid);
+    margin-top: 0.2rem;
+  }
+
+  .retirement-hero .countdown-date {
+    font-size: var(--text-sm);
+    color: var(--text-mid);
+    margin-top: var(--space-xs);
+  }
+
+  .retirement-hero .pension-line {
+    display: inline-block;
+    margin-top: var(--space-md);
+    background: rgba(255,255,255,0.6);
+    border-radius: 30px;
+    padding: 0.4rem 1.2rem;
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  /* Pension comparison cards */
+  .pension-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-md);
+    margin-bottom: var(--space-lg);
+  }
+
+  .pension-card {
+    background: white;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: var(--space-md);
+    text-align: center;
+    box-shadow: var(--shadow-sm);
+  }
+
+  .pension-card.best {
+    border-color: var(--green);
+    background: var(--green-light);
+    box-shadow: var(--shadow-md);
+  }
+
+  .pension-card .p-year {
+    font-size: var(--text-lg);
+    font-weight: 800;
+    color: var(--text);
+    margin-bottom: var(--space-xs);
+  }
+
+  .pension-card.best .p-year { color: var(--green-dark); }
+
+  .pension-card .p-label {
+    font-size: var(--text-xs);
+    color: var(--text-light);
+    margin-bottom: var(--space-sm);
+  }
+
+  .pension-card .p-amount {
+    font-size: var(--text-xl);
+    font-weight: 800;
+    color: var(--text);
+  }
+
+  .pension-card .p-note {
+    font-size: var(--text-xs);
+    margin-top: var(--space-xs);
+    font-weight: 600;
+  }
+
+  .pension-card .p-note.good { color: var(--success); }
+  .pension-card .p-note.warn { color: var(--yellow); }
+  .pension-card .p-note.bad  { color: var(--red); }
+
+  /* Timeline track */
+  .timeline-wrap {
+    background: var(--card-bg);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: var(--space-lg);
+    margin-bottom: var(--space-lg);
+  }
+
+  .timeline-track-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: var(--text-xs);
+    color: var(--text-light);
+    margin-bottom: var(--space-xs);
+  }
+
+  .timeline-track-label .now-label {
+    font-weight: 700;
+    color: var(--blue-deep);
+  }
+
+  .timeline-track {
+    position: relative;
+    height: 10px;
+    background: var(--border);
+    border-radius: 20px;
+    overflow: hidden;
+    margin-bottom: var(--space-md);
+  }
+
+  .timeline-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--green), var(--blue-dark));
+    border-radius: 20px;
+    width: 22%;
+  }
+
+  /* Milestone cards */
+  .milestone-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: var(--space-sm);
+  }
+
+  .milestone-card {
+    padding: 0.7rem var(--space-md);
+    border-radius: var(--radius-sm);
+    border: 1.5px solid var(--border);
+    background: #f8fbfd;
+    font-size: var(--text-sm);
+  }
+
+  .milestone-card .m-year {
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 0.25rem;
+  }
+
+  .milestone-card .m-desc {
+    color: var(--text-light);
+    font-size: var(--text-xs);
+    line-height: 1.4;
+  }
+
+  .milestone-card.active-card {
+    border-color: var(--blue-dark);
+    background: #eef6fb;
+  }
+
+  .milestone-card.active-card .m-year { color: var(--blue-deep); }
+
+  .milestone-card.goal-card {
+    border-color: var(--green);
+    background: var(--green-light);
+  }
+
+  .milestone-card.goal-card .m-year { color: var(--green-dark); }
+
+  /* Vision box */
+  .vision-box {
+    margin-top: var(--space-md);
+    padding: var(--space-md);
+    background: linear-gradient(135deg, #eef6fb, #f4faf2);
+    border-radius: var(--radius-md);
+    border-left: 4px solid var(--green);
+    font-size: var(--text-sm);
+    color: var(--text-mid);
+    line-height: 1.7;
+  }
+
+  .vision-box strong { color: var(--text); }
+
+  /* ================================================
+     FOOTER
+  ================================================ */
+  footer {
+    max-width: var(--max-width);
+    margin: var(--space-xl) auto 0;
+    padding: var(--space-md) var(--space-lg);
+    font-size: var(--text-xs);
+    color: var(--text-faint);
+    text-align: center;
+    border-top: 1px solid var(--border);
+  }
+
+  /* ================================================
+     MOBILE RESPONSIVE
+  ================================================ */
+  @media (max-width: 640px) {
+    header { padding: var(--space-lg) var(--space-md) var(--space-md); }
+    header h1 { font-size: 1.6rem; }
+
+    .section-wrap { padding: var(--space-lg) var(--space-md) var(--space-sm); }
+
+    .finance-grid { grid-template-columns: 1fr 1fr; }
+    .fin-value { font-size: var(--text-xl); }
+
+    .projects-grid { grid-template-columns: 1fr; }
+
+    .pension-grid { grid-template-columns: 1fr; gap: var(--space-sm); }
+
+    .milestone-cards { grid-template-columns: 1fr 1fr; }
+
+    .links-grid { grid-template-columns: 1fr; }
+
+    .sub-table { font-size: var(--text-xs); }
+    .sub-table th, .sub-table td { padding: 0.5rem 0.75rem; }
+
+    .retirement-hero { padding: var(--space-lg) var(--space-md); }
+    .retirement-hero .countdown-number { font-size: 3rem; }
+    .retirement-hero .countdown-unit { font-size: var(--text-lg); }
+
+    nav a { padding: 0.65rem 0.85rem; font-size: 0.78rem; }
+  }
+
+  @media (max-width: 400px) {
+    .finance-grid { grid-template-columns: 1fr; }
+    .milestone-cards { grid-template-columns: 1fr; }
+    .retirement-hero .countdown-number { font-size: 2.6rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ================================================
+     HEADER
+================================================ -->
+<header>
+  <div class="header-inner">
+    <h1><span class="empire-emoji">🏛️</span> Empire HQ</h1>
+    <p class="tagline">Kim's passive income empire — all projects, one place.</p>
+    <div class="meta-row">
+      <span class="last-updated">Updated: March 27, 2026</span>
+      <span class="last-updated">Built by Molly 🐾</span>
+    </div>
+  </div>
+</header>
+
+<!-- ================================================
+     NAVIGATION
+================================================ -->
+<nav>
+  <ul>
+    <li><a href="#finances">💰 Finances</a></li>
+    <li><a href="#projects">📋 Projects</a></li>
+    <li><a href="#subscriptions">📦 Subscriptions</a></li>
+    <li><a href="#links">🔗 Quick Links</a></li>
+    <li><a href="#retirement">🎯 Retirement</a></li>
+  </ul>
+</nav>
+
+<!-- ================================================
+     SECTION 1: FINANCIAL OVERVIEW
+================================================ -->
+<section id="finances">
+  <div class="section-wrap">
+    <div class="section-title"><span>💰</span> Financial Overview</div>
+
+    <div class="finance-grid">
+
+      <div class="fin-card">
+        <div class="fin-label">Total Invested</div>
+        <div class="fin-value negative">$900+</div>
+        <div class="fin-sub">Anthropic $845.22 + subscriptions</div>
+      </div>
+
+      <div class="fin-card">
+        <div class="fin-label">Revenue to Date</div>
+        <div class="fin-value">$0</div>
+        <div class="fin-sub">First sale = milestone 🎉</div>
+        <div class="goal-bar-wrap">
+          <div class="goal-bar"><div class="goal-bar-fill" style="width:0%"></div></div>
+          <div class="goal-bar-label">$0 / $900 break-even</div>
+        </div>
+      </div>
+
+      <div class="fin-card highlight">
+        <div class="fin-label">Income Goal</div>
+        <div class="fin-value positive">$50–80K</div>
+        <div class="fin-sub">Passive income / year by 2030</div>
+      </div>
+
+      <div class="fin-card">
+        <div class="fin-label">Credit Card Balance</div>
+        <div class="fin-value muted">—</div>
+        <div class="fin-sub">⚠️ Add your balance here</div>
+      </div>
+
+      <div class="fin-card">
+        <div class="fin-label">Startup Budget Left</div>
+        <div class="fin-value muted">~$300</div>
+        <div class="fin-sub">Reinvesting proceeds for 1 year</div>
+      </div>
+
+    </div>
+
+    <p class="finance-note">
+      📌 Dedicated empire bank account planned — not yet set up.
+      &nbsp;|&nbsp; Anthropic spend: heaviest days Mar 20 &amp; Mar 23 (~$267 each)
+    </p>
+  </div>
+</section>
+
+<!-- ================================================
+     SECTION 2: PROJECTS
+================================================ -->
+<section id="projects">
+  <div class="section-wrap">
+    <div class="section-title"><span>📋</span> Active Projects</div>
+
+    <div class="projects-grid">
+
+      <!-- 1. Tableau Toolkit -->
+      <div class="proj-card priority-high">
+        <div class="proj-header">
+          <div class="proj-name">🗂️ Tableau Toolkit</div>
+          <span class="badge dev">In Development</span>
+        </div>
+        <div class="proj-rows">
+          <div class="proj-row"><span class="key">Revenue</span><span class="val">Not yet</span></div>
+          <div class="proj-row"><span class="key">Strategy</span><span class="val">Gift to OSU → sell to others</span></div>
+          <div class="proj-row"><span class="key">Platform</span><span class="val">Local HTML → Gumroad</span></div>
+        </div>
+        <div class="proj-next">
+          <div class="next-label">Next Action</div>
+          Demo with Jessica Thursday — test Demo.twbx + Exhibit Builder; record Loom
+        </div>
+        <span class="priority-pill high">🔴 HIGH PRIORITY</span>
+      </div>
+
+      <!-- 2. Squad Planner -->
+      <div class="proj-card priority-medium">
+        <div class="proj-header">
+          <div class="proj-name">🎮 Squad Planner</div>
+          <span class="badge live">Live</span>
+        </div>
+        <div class="proj-rows">
+          <div class="proj-row"><span class="key">Revenue</span><span class="val">Not yet</span></div>
+          <div class="proj-row"><span class="key">Users</span><span class="val">Friends using it ✅</span></div>
+          <div class="proj-row"><span class="key">Platform</span><span class="val">Netlify / Firebase</span></div>
+        </div>
+        <div class="proj-next">
+          <div class="next-label">Next Action</div>
+          Deploy latest UX fixes (zip-first address flow)
+        </div>
+        <span class="priority-pill medium">🟡 MEDIUM</span>
+      </div>
+
+      <!-- 3. KDP Journals -->
+      <div class="proj-card priority-medium">
+        <div class="proj-header">
+          <div class="proj-name">📚 KDP Journals</div>
+          <span class="badge dev">In Development</span>
+        </div>
+        <div class="proj-rows">
+          <div class="proj-row"><span class="key">Revenue</span><span class="val">Not yet</span></div>
+          <div class="proj-row"><span class="key">Ready</span><span class="val">10 PDFs + Psalm Journal</span></div>
+          <div class="proj-row"><span class="key">Platform</span><span class="val">Amazon KDP</span></div>
+        </div>
+        <div class="proj-next">
+          <div class="next-label">Next Action</div>
+          Full quality review + cover DPI fix → upload to KDP
+        </div>
+        <span class="priority-pill medium">🟡 MEDIUM</span>
+      </div>
+
+      <!-- 4. Book: Still Looking Up -->
+      <div class="proj-card priority-medium">
+        <div class="proj-header">
+          <div class="proj-name">📖 Still Looking Up</div>
+          <span class="badge progress">In Progress</span>
+        </div>
+        <div class="proj-rows">
+          <div class="proj-row"><span class="key">Revenue</span><span class="val">Not yet</span></div>
+          <div class="proj-row"><span class="key">Progress</span><span class="val">23 of 34 [KIM:] markers filled</span></div>
+          <div class="proj-row"><span class="key">Platform</span><span class="val">KDP + TikTok Shop</span></div>
+        </div>
+        <div class="proj-next">
+          <div class="next-label">Next Action</div>
+          Fill 11 remaining [KIM:] markers (see kim-voice.md)
+        </div>
+        <span class="priority-pill medium">🟡 MEDIUM</span>
+      </div>
+
+      <!-- 5. Claw TikTok Story -->
+      <div class="proj-card priority-low">
+        <div class="proj-header">
+          <div class="proj-name">🐦‍⬛ Claw TikTok Story</div>
+          <span class="badge concept">Concept</span>
+        </div>
+        <div class="proj-rows">
+          <div class="proj-row"><span class="key">Revenue</span><span class="val">Not yet</span></div>
+          <div class="proj-row"><span class="key">Status</span><span class="val">Soul file created</span></div>
+          <div class="proj-row"><span class="key">Platform</span><span class="val">TikTok (interactive series)</span></div>
+        </div>
+        <div class="proj-next">
+          <div class="next-label">Next Action</div>
+          Bring Heyron files to continue world-building
+        </div>
+        <span class="priority-pill low">🔵 LOW</span>
+      </div>
+
+      <!-- 6. Scripture Videos -->
+      <div class="proj-card priority-medium">
+        <div class="proj-header">
+          <div class="proj-name">🎬 Scripture Videos</div>
+          <span class="badge progress">In Progress</span>
+        </div>
+        <div class="proj-rows">
+          <div class="proj-row"><span class="key">Revenue</span><span class="val">Not yet</span></div>
+          <div class="proj-row"><span class="key">Series</span><span class="val">Love Is Patient (8 clips planned)</span></div>
+          <div class="proj-row"><span class="key">Platform</span><span class="val">TikTok / Kling AI</span></div>
+        </div>
+        <div class="proj-next">
+          <div class="next-label">Next Action</div>
+          Submit 5 Kling AI prompts for next batch
+        </div>
+        <span class="priority-pill medium">🟡 MEDIUM</span>
+      </div>
+
+      <!-- 7. AI Integration Course -->
+      <div class="proj-card priority-low">
+        <div class="proj-header">
+          <div class="proj-name">🎓 AI Integration Course</div>
+          <span class="badge concept">Outline Created</span>
+        </div>
+        <div class="proj-rows">
+          <div class="proj-row"><span class="key">Revenue</span><span class="val">Not yet</span></div>
+          <div class="proj-row"><span class="key">Format</span><span class="val">7-module written course</span></div>
+          <div class="proj-row"><span class="key">Price</span><span class="val">$37 or $57 with templates</span></div>
+        </div>
+        <div class="proj-next">
+          <div class="next-label">Next Action</div>
+          Kim reviews 7-module outline, puts her name on it
+        </div>
+        <span class="priority-pill low">🔵 LOW</span>
+      </div>
+
+      <!-- 8. Quilt Coloring Books -->
+      <div class="proj-card priority-low">
+        <div class="proj-header">
+          <div class="proj-name">🧵 Quilt Coloring Books</div>
+          <span class="badge concept">Concept</span>
+        </div>
+        <div class="proj-rows">
+          <div class="proj-row"><span class="key">Revenue</span><span class="val">Not yet</span></div>
+          <div class="proj-row"><span class="key">Angle</span><span class="val">Faith + secular; 50+ audience</span></div>
+          <div class="proj-row"><span class="key">Platform</span><span class="val">Amazon KDP</span></div>
+        </div>
+        <div class="proj-next">
+          <div class="next-label">Next Action</div>
+          Design initial quilt patterns (underserved niche)
+        </div>
+        <span class="priority-pill low">🔵 LOW</span>
+      </div>
+
+      <!-- 9. Empire HQ Dashboard -->
+      <div class="proj-card priority-high">
+        <div class="proj-header">
+          <div class="proj-name">🏛️ Empire HQ Dashboard</div>
+          <span class="badge building">Building Now</span>
+        </div>
+        <div class="proj-rows">
+          <div class="proj-row"><span class="key">Revenue</span><span class="val">N/A (infrastructure)</span></div>
+          <div class="proj-row"><span class="key">Format</span><span class="val">Single HTML file</span></div>
+          <div class="proj-row"><span class="key">Platform</span><span class="val">Netlify</span></div>
+        </div>
+        <div class="proj-next">
+          <div class="next-label">Next Action</div>
+          Deploy to Netlify → update monthly
+        </div>
+        <span class="priority-pill high">🔴 HIGH PRIORITY</span>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ================================================
+     SECTION 3: SUBSCRIPTIONS
+================================================ -->
+<section id="subscriptions">
+  <div class="section-wrap">
+    <div class="section-title"><span>📦</span> Subscriptions &amp; Costs</div>
+
+    <div class="table-scroll">
+      <table class="sub-table">
+        <thead>
+          <tr>
+            <th>Service</th>
+            <th>Cost / Credits</th>
+            <th>Status</th>
+            <th>Notes</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Anthropic API</strong></td>
+            <td>$845.22 (Mar 1–23)</td>
+            <td><span class="status-badge active">Active</span></td>
+            <td>Auto-reload $5→$15; heaviest days ~$267 each</td>
+          </tr>
+          <tr>
+            <td><strong>Kling AI</strong></td>
+            <td>Pro plan</td>
+            <td><span class="status-badge active">Active</span></td>
+            <td>~2,300 credits remaining</td>
+          </tr>
+          <tr>
+            <td><strong>Art Gen AI</strong></td>
+            <td>—</td>
+            <td><span class="status-badge active">Active</span></td>
+            <td>1,350 credits remaining</td>
+          </tr>
+          <tr>
+            <td><strong>Canva</strong></td>
+            <td>Paid plan</td>
+            <td><span class="status-badge active">Active</span></td>
+            <td>Used for covers &amp; graphics</td>
+          </tr>
+          <tr>
+            <td><strong>Pika</strong></td>
+            <td>—</td>
+            <td><span class="status-badge dead">⚠️ Basically Dead</span></td>
+            <td>12 credits; not using</td>
+          </tr>
+          <tr>
+            <td><strong>Netlify</strong></td>
+            <td>Free tier</td>
+            <td><span class="status-badge active">Active</span></td>
+            <td>Hosting Squad Planner + this dashboard</td>
+          </tr>
+          <tr>
+            <td><strong>Firebase</strong></td>
+            <td>Free tier</td>
+            <td><span class="status-badge active">Active</span></td>
+            <td>squad-planner-b666c; real-time sync</td>
+          </tr>
+          <tr>
+            <td><strong>Plaid / CDP</strong></td>
+            <td>—</td>
+            <td><span class="status-badge warn">⏳ Not Set Up</span></td>
+            <td>Read-only bank monitoring; pending</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p class="table-note">📌 Full subscription list: workspace/subscriptions-image-gen.md</p>
+  </div>
+</section>
+
+<!-- ================================================
+     SECTION 4: QUICK LINKS
+================================================ -->
+<section id="links">
+  <div class="section-wrap">
+    <div class="section-title"><span>🔗</span> Quick Links</div>
+
+    <div class="links-grid">
+
+      <div class="link-card">
+        <div class="link-title">🎮 Squad Planner</div>
+        <a href="https://vocal-shortbread-e3862d.netlify.app" target="_blank">vocal-shortbread-e3862d.netlify.app</a>
+        <div class="link-note">Live app — friends are using it</div>
+      </div>
+
+      <div class="link-card">
+        <div class="link-title">🗂️ Tableau Toolkit</div>
+        <a href="#" onclick="navigator.clipboard && navigator.clipboard.writeText('C:\\Users\\Owner\\Documents\\Tableau-Tools\\tableau-workflow.html'); alert('Path copied!'); return false;">
+          C:\Users\Owner\Documents\Tableau-Tools\tableau-workflow.html
+        </a>
+        <div class="link-note">Local file — click to copy path</div>
+      </div>
+
+      <div class="link-card">
+        <div class="link-title">📧 Empire Email</div>
+        <a href="mailto:mollysutkin@gmail.com">mollysutkin@gmail.com</a>
+        <div class="link-note">Empire projects email</div>
+      </div>
+
+      <div class="link-card">
+        <div class="link-title">📖 Book Manuscript</div>
+        <a href="#" onclick="navigator.clipboard && navigator.clipboard.writeText('C:\\Users\\Owner\\Documents\\Bible Journals\\Writing samples\\full-manuscript-v2.md'); alert('Path copied!'); return false;">
+          ...\Bible Journals\Writing samples\full-manuscript-v2.md
+        </a>
+        <div class="link-note">Still Looking Up — 11 [KIM:] markers remain</div>
+      </div>
+
+      <div class="link-card">
+        <div class="link-title">📦 Amazon KDP</div>
+        <a href="https://kdp.amazon.com" target="_blank">kdp.amazon.com</a>
+        <div class="link-note">Upload journals + book here</div>
+      </div>
+
+      <div class="link-card">
+        <div class="link-title">🎬 Kling AI</div>
+        <a href="https://app.klingai.com" target="_blank">app.klingai.com</a>
+        <div class="link-note">~2,300 credits remaining</div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ================================================
+     SECTION 5: RETIREMENT
+================================================ -->
+<section id="retirement">
+  <div class="section-wrap">
+    <div class="section-title"><span>🎯</span> Retirement Countdown</div>
+
+    <!-- Hero countdown -->
+    <div class="retirement-hero">
+      <div class="hero-label">Days until May 1, 2030</div>
+      <div class="countdown-number" id="countdown-days">1,495</div>
+      <div class="countdown-unit">days to freedom</div>
+      <div class="countdown-date">Target retirement: May 1, 2030 &nbsp;·&nbsp; 32 years of service</div>
+      <div class="pension-line">🏦 Full pension = $6,297/mo ($75,564/yr)</div>
+    </div>
+
+    <!-- Pension options comparison -->
+    <div class="pension-grid">
+
+      <div class="pension-card">
+        <div class="p-year">Oct 2026</div>
+        <div class="p-label">Early option</div>
+        <div class="p-amount">$3,214<span style="font-size:var(--text-sm);font-weight:500;">/mo</span></div>
+        <div class="p-note bad">Leaving $37K/yr on the table</div>
+      </div>
+
+      <div class="pension-card">
+        <div class="p-year">Jun 2028</div>
+        <div class="p-label">Middle option</div>
+        <div class="p-amount">$4,301<span style="font-size:var(--text-sm);font-weight:500;">/mo</span></div>
+        <div class="p-note warn">Leaving $24K/yr on the table</div>
+      </div>
+
+      <div class="pension-card best">
+        <div class="p-year">May 2030 ⭐</div>
+        <div class="p-label">Full pension — target date</div>
+        <div class="p-amount">$6,297<span style="font-size:var(--text-sm);font-weight:500;">/mo</span></div>
+        <div class="p-note good">Maximum pension. The goal.</div>
+      </div>
+
+    </div>
+
+    <!-- Progress timeline -->
+    <div class="timeline-wrap">
+      <div class="timeline-track-label">
+        <span>2025 — Empire launched</span>
+        <span class="now-label">→ Now (2026)</span>
+        <span>2030 🎉 Retire</span>
+      </div>
+      <div class="timeline-track">
+        <div class="timeline-fill"></div>
+      </div>
+
+      <div class="milestone-cards">
+        <div class="milestone-card">
+          <div class="m-year">✅ 2025</div>
+          <div class="m-desc">Empire born. First projects started. Molly comes online.</div>
+        </div>
+        <div class="milestone-card active-card">
+          <div class="m-year">📍 2026 — NOW</div>
+          <div class="m-desc">Building: Tableau Toolkit, Squad Planner, KDP Journals, Book. Goal: recoup $900.</div>
+        </div>
+        <div class="milestone-card">
+          <div class="m-year">🎯 2027</div>
+          <div class="m-desc">Target: $10–20K passive. At least 2 products selling. Book published.</div>
+        </div>
+        <div class="milestone-card">
+          <div class="m-year">📈 2028</div>
+          <div class="m-desc">Scale what's working. Speaking gigs start. AI course live.</div>
+        </div>
+        <div class="milestone-card">
+          <div class="m-year">💰 2029</div>
+          <div class="m-desc">Target: $40–60K passive. Empire running on 1–5 hrs/week.</div>
+        </div>
+        <div class="milestone-card goal-card">
+          <div class="m-year">🎉 2030 — RETIRE</div>
+          <div class="m-desc">Pension ~$72K/yr + $50–80K passive. Freedom. Molly keeps the empire running.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Vision box -->
+    <div class="vision-box">
+      <strong>The vision:</strong> Kim's pension covers the basics (~$6K/month). The empire covers the <em>good stuff</em> — speaking travel, time with grandkids, doing only what you love. <strong>1–5 hours a week max.</strong> Molly does the heavy lifting. Passive streams are what you actually retire <em>on</em>.
+    </div>
+
+  </div>
+</section>
+
+<!-- ================================================
+     FOOTER
+================================================ -->
+<footer>
+  Empire HQ Dashboard &nbsp;·&nbsp; Built by Molly 🐾 &nbsp;·&nbsp; March 2026 &nbsp;·&nbsp; Update monthly<br>
+  <span>To update: tell Molly what changed and ask her to rebuild. Or edit the HTML directly.</span>
+</footer>
+
+<!-- ================================================
+     SCRIPTS
+================================================ -->
+<script>
+  // Live countdown
+  function updateCountdown() {
+    const target = new Date('2030-05-01T00:00:00');
+    const now = new Date();
+    const diff = Math.max(0, Math.floor((target - now) / (1000 * 60 * 60 * 24)));
+    const el = document.getElementById('countdown-days');
+    if (el) el.textContent = diff.toLocaleString();
+  }
+  updateCountdown();
+  setInterval(updateCountdown, 86400000);
+
+  // Nav active state on scroll
+  (function () {
+    const sections = document.querySelectorAll('section[id]');
+    const links = document.querySelectorAll('nav a');
+
+    function setActive() {
+      let current = '';
+      sections.forEach(s => {
+        if (window.scrollY >= s.offsetTop - 80) current = s.id;
+      });
+      links.forEach(a => {
+        a.classList.toggle('active', a.getAttribute('href') === '#' + current);
+      });
+    }
+
+    window.addEventListener('scroll', setActive, { passive: true });
+    setActive();
+  })();
+</script>
+
+</body>
+</html>
